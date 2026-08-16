@@ -5,10 +5,10 @@ import { ProductCard } from '../components/ProductCard';
 import { Tag, Sparkles, Copy, Check, GraduationCap, Percent, Zap } from 'lucide-react';
 
 export const OffersPage = () => {
-  const { applyCouponCode, showToast, navigateToCategory } = useShop();
+  const { products, applyCouponCode, showToast, navigateToCategory } = useShop();
   const [copiedCode, setCopiedCode] = useState(null);
 
-  const offerProducts = PRODUCTS.filter(p => p.discount >= 44);
+  const offerProducts = products.filter(p => p.discount >= 44);
 
   const handleCopy = (code) => {
     navigator.clipboard?.writeText(code);
