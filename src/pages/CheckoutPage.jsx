@@ -630,13 +630,6 @@ export const CheckoutPage = () => {
                     </div>
                   </div>
                 </div>
-
-                {paymentMethod === 'razorpay' && (
-                  <div style={{ marginTop: '1rem', padding: '0.75rem', background: '#ffffff', borderRadius: '8px', border: '1px solid #bfdbfe', fontSize: '0.8rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <ShieldCheck size={18} color="#0066cc" />
-                    <span>Official Razorpay Gateway (Key: <strong>rzp_test_...5t</strong>) • 100% Encrypted & Instant Confirmation</span>
-                  </div>
-                )}
               </div>
 
               {/* Option B: Cash on Delivery (COD) */}
