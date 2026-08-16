@@ -5,6 +5,7 @@ import { Search, X, ArrowRight, Laptop, Droplets, Shield } from 'lucide-react';
 
 export const SearchModal = () => {
   const { 
+    products,
     isSearchOpen, 
     setIsSearchOpen, 
     navigateToProduct, 
@@ -22,7 +23,7 @@ export const SearchModal = () => {
 
   if (!isSearchOpen) return null;
 
-  const filtered = query.trim() === '' ? [] : PRODUCTS.filter(p => {
+  const filtered = query.trim() === '' ? [] : products.filter(p => {
     const q = query.toLowerCase();
     return (
       p.name.toLowerCase().includes(q) ||
@@ -91,4 +92,101 @@ export const SearchModal = () => {
             Trending Searches for College & Travel
           </span>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {quickPicks.map((pick, i) => (\n              <button\n                key={i}\n                onClick={() => setQuery(pick)}\n                style={{\n                  background: '#ffffff',\n                  border: '1px solid #cbd5e1',\n                  padding: '4px 12px',\n                  borderRadius: '999px',\n                  fontSize: '0.8rem',\n                  fontWeight: 600,\n                  color: '#334155'\n                }}\n              >\n                {pick}\n              </button>\n            ))}\n          </div>\n        </div>\n\n        {/* Live Search Results */}\n        <div style={{ maxHeight: '420px', overflowY: 'auto', padding: '1rem 1.5rem' }}>\n          {query && filtered.length === 0 ? (\n            <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>\n              <p style={{ fontWeight: 600 }}>No Skybag products found for \"{query}\"</p>\n              <p style={{ fontSize: '0.85rem', marginTop: '4px' }}>Try searching \"backpack\", \"suitcases\", \"waterproof\", or \"duffel\"</p>\n            </div>\n          ) : filtered.length > 0 ? (\n            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>\n              {filtered.map(p => (\n                <div \n                  key={p.id}\n                  onClick={() => {\n                    setIsSearchOpen(false);\n                    navigateToProduct(p);\n                  }}\n                  style={{\n                    display: 'flex',\n                    alignItems: 'center',\n                    gap: '14px',\n                    padding: '10px',\n                    borderRadius: '8px',\n                    border: '1px solid #f1f5f9',\n                    cursor: 'pointer',\n                    transition: 'background 0.2s'\n                  }}\n                  onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'}\n                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}\n                >\n                  <img src={p.image} alt={p.name} style={{ width: '50px', height: '50px', objectFit: 'contain' }} />\n                  <div style={{ flex: 1 }}>\n                    <h5 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a', marginBottom: '2px' }}>\n                      {p.name}\n                    </h5>\n                    <div style={{ fontSize: '0.78rem', color: '#64748b' }}>\n                      {p.categoryName} • {p.capacity} • {p.isWaterproof ? 'Water Resistant' : ''}\n                    </div>\n                  </div>\n                  <div style={{ textAlign: 'right' }}>\n                    <div style={{ fontWeight: 800, color: '#0f172a' }}>{formatPrice(p.price)}</div>\n                    <span style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 700 }}>{p.discount}% OFF</span>\n                  </div>\n                </div>\n              ))}\n            </div>\n          ) : (\n            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', padding: '1rem 0' }}>\n              <div \n                onClick={() => { setIsSearchOpen(false); navigateToCategory('backpacks'); }}\n                style={{ background: '#f8fafc', padding: '1rem', borderRadius: '10px', textAlign: 'center', cursor: 'pointer' }}\n              >\n                <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>🎒</div>\n                <strong style={{ fontSize: '0.85rem' }}>Backpacks</strong>\n                <p style={{ fontSize: '0.75rem', color: '#64748b' }}>₹1,000 - ₹2,500</p>\n              </div>\n              <div \n                onClick={() => { setIsSearchOpen(false); navigateToCategory('suitcases'); }}\n                style={{ background: '#f8fafc', padding: '1rem', borderRadius: '10px', textAlign: 'center', cursor: 'pointer' }}\n              >\n                <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>🧳</div>\n                <strong style={{ fontSize: '0.85rem' }}>Suitcases</strong>\n                <p style={{ fontSize: '0.75rem', color: '#64748b' }}>₹5,000 - ₹15,000</p>\n              </div>\n              <div \n                onClick={() => { setIsSearchOpen(false); navigateToCategory('duffels'); }}\n                style={{ background: '#f8fafc', padding: '1rem', borderRadius: '10px', textAlign: 'center', cursor: 'pointer' }}\n              >\n                <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>🏋️‍♂️</div>\n                <strong style={{ fontSize: '0.85rem' }}>Duffel Bags</strong>\n                <p style={{ fontSize: '0.75rem', color: '#64748b' }}>₹3,000 - ₹5,000</p>\n              </div>\n            </div>\n          )}\n        </div>\n      </div>\n    </div>\n  );\n};\n
+            {quickPicks.map((pick, i) => (
+              <button
+                key={i}
+                onClick={() => setQuery(pick)}
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #cbd5e1',
+                  padding: '4px 12px',
+                  borderRadius: '999px',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  color: '#334155'
+                }}
+              >
+                {pick}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Live Search Results */}
+        <div style={{ maxHeight: '420px', overflowY: 'auto', padding: '1rem 1.5rem' }}>
+          {query && filtered.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+              <p style={{ fontWeight: 600 }}>No Skybag products found for "{query}"</p>
+              <p style={{ fontSize: '0.85rem', marginTop: '4px' }}>Try searching "backpack", "suitcases", "waterproof", or "duffel"</p>
+            </div>
+          ) : filtered.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {filtered.map(p => (
+                <div 
+                  key={p.id}
+                  onClick={() => {
+                    setIsSearchOpen(false);
+                    navigateToProduct(p);
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '14px',
+                    padding: '10px',
+                    borderRadius: '8px',
+                    border: '1px solid #f1f5f9',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                >
+                  <img src={p.image} alt={p.name} style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
+                  <div style={{ flex: 1 }}>
+                    <h5 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a', marginBottom: '2px' }}>
+                      {p.name}
+                    </h5>
+                    <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                      {p.categoryName} • {p.capacity} • {p.isWaterproof ? 'Water Resistant' : ''}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontWeight: 800, color: '#0f172a' }}>{formatPrice(p.price)}</div>
+                    <span style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 700 }}>{p.discount}% OFF</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', padding: '1rem 0' }}>
+              <div 
+                onClick={() => { setIsSearchOpen(false); navigateToCategory('backpacks'); }}
+                style={{ background: '#f8fafc', padding: '1rem', borderRadius: '10px', textAlign: 'center', cursor: 'pointer' }}
+              >
+                <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>🎒</div>
+                <strong style={{ fontSize: '0.85rem' }}>Backpacks</strong>
+                <p style={{ fontSize: '0.75rem', color: '#64748b' }}>₹1,000 - ₹2,500</p>
+              </div>
+              <div 
+                onClick={() => { setIsSearchOpen(false); navigateToCategory('suitcases'); }}
+                style={{ background: '#f8fafc', padding: '1rem', borderRadius: '10px', textAlign: 'center', cursor: 'pointer' }}
+              >
+                <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>🧳</div>
+                <strong style={{ fontSize: '0.85rem' }}>Suitcases</strong>
+                <p style={{ fontSize: '0.75rem', color: '#64748b' }}>₹5,000 - ₹15,000</p>
+              </div>
+              <div 
+                onClick={() => { setIsSearchOpen(false); navigateToCategory('duffels'); }}
+                style={{ background: '#f8fafc', padding: '1rem', borderRadius: '10px', textAlign: 'center', cursor: 'pointer' }}
+              >
+                <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>🏋️‍♂️</div>
+                <strong style={{ fontSize: '0.85rem' }}>Duffel Bags</strong>
+                <p style={{ fontSize: '0.75rem', color: '#64748b' }}>₹3,000 - ₹5,000</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
