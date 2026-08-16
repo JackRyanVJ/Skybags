@@ -32,6 +32,13 @@ export const HomePage = () => {
   const newArrivals = products.filter(p => p.isNew).slice(0, 4);
   const featuredSuitcases = products.filter(p => p.category === 'suitcases').slice(0, 4);
 
+  // Dynamic Image sources with Supabase CDN fallbacks
+  const heroBackpack = products.find(p => p.id === 'bp-4') || products.find(p => p.category === 'backpacks') || PRODUCTS[3];
+  const catBackpack = products.find(p => p.category === 'backpacks') || PRODUCTS[0];
+  const catSuitcase = products.find(p => p.category === 'suitcases') || PRODUCTS[10];
+  const catDuffel = products.find(p => p.category === 'duffels') || PRODUCTS[20];
+  const marvelSuitcase = products.find(p => p.id === 'sc-5') || PRODUCTS[14];
+
   const [copiedCoupon, setCopiedCoupon] = React.useState(null);
 
   const copyCoupon = (code) => {
@@ -95,9 +102,12 @@ export const HomePage = () => {
             {/* Visual Hero Showcase Card */}
             <div className="hero-visual-card">
               <img 
-                src="https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/backpacks/backpack_4.jpg" 
+                src={heroBackpack?.image || 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/backpacks/backpack_4.jpg'} 
                 alt="Skybags Transit Series Pro Backpack" 
                 className="hero-img-display"
+                onError={(e) => {
+                  e.target.src = 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/backpacks/backpack_4.jpg';
+                }}
               />
 
               <div className="hero-floating-pill">
@@ -202,7 +212,13 @@ export const HomePage = () => {
                 </span>
               </div>
               <div className="cat-tile-img-box">
-                <img src="https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/backpacks/backpack_1.jpg" alt="Skybags Backpack" />
+                <img 
+                  src={catBackpack?.image || 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/backpacks/backpack_1.jpg'} 
+                  alt="Skybags Backpack" 
+                  onError={(e) => {
+                    e.target.src = 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/backpacks/backpack_1.jpg';
+                  }}
+                />
               </div>
             </div>
 
@@ -220,7 +236,13 @@ export const HomePage = () => {
                 </span>
               </div>
               <div className="cat-tile-img-box">
-                <img src="https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/suitcases/suitcase_1.jpg" alt="Skybags Suitcase" />
+                <img 
+                  src={catSuitcase?.image || 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/suitcases/suitcase_1.jpg'} 
+                  alt="Skybags Suitcase" 
+                  onError={(e) => {
+                    e.target.src = 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/suitcases/suitcase_1.jpg';
+                  }}
+                />
               </div>
             </div>
 
@@ -238,7 +260,13 @@ export const HomePage = () => {
                 </span>
               </div>
               <div className="cat-tile-img-box">
-                <img src="https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/duffels/duffel_2.jpg" alt="Skybags Duffel" />
+                <img 
+                  src={catDuffel?.image || 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/duffels/duffel_2.jpg'} 
+                  alt="Skybags Duffel" 
+                  onError={(e) => {
+                    e.target.src = 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/duffels/duffel_2.jpg';
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -311,9 +339,12 @@ export const HomePage = () => {
 
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <img 
-                src="https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/suitcases/suitcase_5.jpg" 
+                src={marvelSuitcase?.image || 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/suitcases/suitcase_5.jpg'} 
                 alt="Skybags Marvel Edition" 
                 style={{ maxHeight: '300px', filter: 'drop-shadow(0 20px 25px rgba(0,0,0,0.6))' }}
+                onError={(e) => {
+                  e.target.src = 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/suitcases/suitcase_5.jpg';
+                }}
               />
             </div>
           </div>
