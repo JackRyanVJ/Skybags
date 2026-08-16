@@ -1,6 +1,6 @@
 import React from 'react';
 import { useShop } from '../context/ShopContext';
-import { ShieldCheck, Truck, RotateCcw, Award, Phone, Mail, MapPin } from 'lucide-react';
+import { ShieldCheck, Truck, RotateCcw, Award, Phone, Mail, MapPin, Lock } from 'lucide-react';
 
 export const Footer = () => {
   const { setActiveTab, navigateToCategory } = useShop();
@@ -92,7 +92,7 @@ export const Footer = () => {
               <li><a href="#stores" onClick={(e) => { e.preventDefault(); setActiveTab('stores'); }}>Locate Nearby Store</a></li>
               <li><a href="#finder" onClick={(e) => { e.preventDefault(); setActiveTab('recommended'); }}>Bag Finder Quiz</a></li>
               <li><a href="#warranty" onClick={(e) => { e.preventDefault(); setActiveTab('account'); }}>Warranty Registration</a></li>
-              <li><a href="#faq" onClick={(e) => { e.preventDefault(); setActiveTab('home'); }}>FAQs & Shipping Policy</a></li>
+              <li><a href="#admin-skybags" onClick={(e) => { e.preventDefault(); setActiveTab('admin'); }} style={{ color: '#facc15', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><Lock size={12} /> Admin Portal (/admin-skybags)</a></li>
             </ul>
           </div>
 
@@ -117,10 +117,17 @@ export const Footer = () => {
           <div>
             © 2026 Skybags (VIP Industries Ltd). All rights reserved. Designed for youth & college students.
           </div>
-          <div style={{ display: 'flex', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
             <span>Privacy Policy</span>
             <span>Terms of Service</span>
             <span>GST Invoice Compliant (IN)</span>
+            <a 
+              href="/admin-skybags" 
+              onClick={(e) => { e.preventDefault(); setActiveTab('admin'); }}
+              style={{ color: '#facc15', fontSize: '0.75rem', fontWeight: 800, textDecoration: 'none' }}
+            >
+              🔒 Admin Login (/admin-skybags)
+            </a>
           </div>
         </div>
       </div>
