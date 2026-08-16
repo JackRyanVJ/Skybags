@@ -81,7 +81,7 @@ export const AdminPage = () => {
     waterproof: 'Water Resistant Coated Ripstop',
     isWaterproof: true,
     warranty: '1 Year International Warranty',
-    image: '/images/backpacks/backpack_1.jpg',
+    image: 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/backpacks/backpack_1.jpg',
     description: 'Latest high-performance Skybags design.',
     features: ['Dedicated Padded Laptop Sleeve', 'Ergonomic Air Mesh Backing', 'Water-Resistant Shell']
   });
@@ -1213,7 +1213,7 @@ export const AdminPage = () => {
       {isAddingNewProduct && (
         <div className="drawer-backdrop" onClick={() => setIsAddingNewProduct(false)} style={{ alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
           <div style={{ background: '#ffffff', width: '100%', maxWidth: '600px', borderRadius: '16px', padding: '2rem', maxHeight: '90vh', overflowY: 'auto' }} onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', assembly: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Plus size={20} color="#16a34a" />
                 <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a' }}>Add New Skybags Product</h3>
@@ -1234,7 +1234,7 @@ export const AdminPage = () => {
                       ...newProductForm, 
                       category: e.target.value,
                       categoryName: e.target.value === 'backpacks' ? 'Backpacks' : e.target.value === 'suitcases' ? 'Suitcases' : 'Duffel Bags',
-                      image: e.target.value === 'backpacks' ? '/images/backpacks/backpack_1.jpg' : e.target.value === 'suitcases' ? '/images/suitcases/suitcase_1.jpg' : '/images/duffels/duffel_1.jpg'
+                      image: e.target.value === 'backpacks' ? 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/backpacks/backpack_1.jpg' : e.target.value === 'suitcases' ? 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/suitcases/suitcase_1.jpg' : 'https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/duffels/duffel_1.jpg'
                     })}
                   >
                     <option value="backpacks">Backpacks (College & Tech)</option>

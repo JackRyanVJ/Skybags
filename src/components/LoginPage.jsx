@@ -209,7 +209,8 @@ export const LoginPage = ({ onClose }) => {
           <button
             type="button"
             onClick={() => { setLoginMethod('email'); setOtpSent(false); }}
-            style={{\n              flex: 1,
+            style={{
+              flex: 1,
               padding: '7px 0',
               borderRadius: '6px',
               fontSize: '0.82rem',
@@ -228,7 +229,8 @@ export const LoginPage = ({ onClose }) => {
           <button
             type="button"
             onClick={() => { setLoginMethod('mobile'); setOtpSent(false); setOtp(''); }}
-            style={{\n              flex: 1,
+            style={{
+              flex: 1,
               padding: '7px 0',
               borderRadius: '6px',
               fontSize: '0.82rem',

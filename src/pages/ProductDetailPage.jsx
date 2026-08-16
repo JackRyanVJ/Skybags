@@ -228,7 +228,7 @@ export const ProductDetailPage = () => {
             </div>
             <form onSubmit={handleCheckPincode} className="pincode-input-row">
               <input 
-                type="text" 
+                type="text"
                 maxLength={6}
                 value={pincode}
                 onChange={(e) => setPincode(e.target.value)}

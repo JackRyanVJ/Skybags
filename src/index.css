@@ -1190,7 +1190,7 @@ img {
   border-radius: 6px;
 }
 
-/* Key Feature Spec Highlights */
+/* Key Feature Spec Cards */
 .pdp-spec-highlights {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

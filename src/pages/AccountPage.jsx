@@ -16,12 +16,12 @@ import {
   CheckCircle2, 
   Plus, 
   Trash2, 
-  ExternalLink, 
-  Download, 
-  AlertCircle, 
-  Ban, 
-  RotateCcw, 
-  X 
+  ExternalLink,
+  Download,
+  AlertCircle,
+  Ban,
+  RotateCcw,
+  X
 } from 'lucide-react';
 
 export const AccountPage = () => {

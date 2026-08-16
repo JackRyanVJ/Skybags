@@ -7,19 +7,22 @@ export const Toast = () => {
 
   if (!toastMessage) return null;
 
-  const { message, type } = toastMessage;
+  const getIcon = () => {
+    switch (toastMessage.type) {
+      case 'error':
+        return <AlertCircle size={18} color="#ef4444" />;
+      case 'info':
+        return <Info size={18} color="#38bdf8" />;
+      default:
+        return <CheckCircle2 size={18} color="#22c55e" />;
+    }
+  };
 
   return (
     <div className="toast-container">
-      <div className={`toast-box ${type}`}>
-        {type === 'error' ? (
-          <AlertCircle size={18} color="#ef4444" />
-        ) : type === 'info' ? (
-          <Info size={18} color="#38bdf8" />
-        ) : (
-          <CheckCircle2 size={18} color="#facc15" />
-        )}
-        <span>{message}</span>
+      <div className={`toast-box ${toastMessage.type || ''}`}>
+        {getIcon()}
+        <span>{toastMessage.message}</span>
       </div>
     </div>
   );

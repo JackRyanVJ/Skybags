@@ -1,237 +1,187 @@
 import React, { useState } from 'react';
-import { useShop } from '../context/ShopContext';
 import { STORES, CITIES } from '../data/stores';
+import { useShop } from '../context/ShopContext';
 import { 
   MapPin, 
+  Search, 
   Phone, 
   Clock, 
   Navigation, 
-  Search, 
   CheckCircle2, 
-  ShieldCheck, 
+  Layers, 
   ExternalLink,
-  Store
+  Sparkles,
+  ShoppingBag
 } from 'lucide-react';
 
 export const StoreLocatorPage = () => {
   const { showToast } = useShop();
-
   const [selectedCity, setSelectedCity] = useState('All Cities');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStore, setSelectedStore] = useState(STORES[0]);
 
-  const filteredStores = STORES.filter(s => {
-    const matchesCity = selectedCity === 'All Cities' || s.city.toLowerCase() === selectedCity.toLowerCase();
-    const q = searchQuery.toLowerCase();
-    const matchesQuery = !searchQuery || 
-      s.name.toLowerCase().includes(q) ||
-      s.city.toLowerCase().includes(q) ||
-      s.state.toLowerCase().includes(q) ||
-      s.pincode.includes(q) ||
-      s.address.toLowerCase().includes(q);
-    return matchesCity && matchesQuery;
+  const filteredStores = STORES.filter(store => {
+    if (selectedCity !== 'All Cities' && store.city !== selectedCity) {
+      return false;
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      return (
+        store.name.toLowerCase().includes(q) ||
+        store.city.toLowerCase().includes(q) ||
+        store.address.toLowerCase().includes(q) ||
+        store.pincode.includes(q)
+      );
+    }
+    return true;
   });
-
-  const handleGetDirections = (store) => {
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.mapQuery || store.address)}`;
-    window.open(url, '_blank');
-    showToast(`Opening Google Maps directions for ${store.name}! 🗺️`);
-  };
 
   return (
     <div className="container" style={{ padding: '3rem 1.25rem 5rem' }}>
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#eff6ff', color: '#0066cc', padding: '4px 12px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px' }}>
-          <Store size={14} /> VIP Industries Authorized Network
+      <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 2.5rem' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#e0f2fe', color: '#0369a1', padding: '4px 12px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px' }}>
+          <MapPin size={14} /> VIP & Skybags Official Store Network
         </div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#0a1f38' }}>
-          Find a Skybags Store Near You
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.15 }}>
+          Nearby Skybags Store Locator
         </h1>
-        <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '6px' }}>
-          Visit 12+ official experience stores across Pune, Mumbai, Delhi NCR, Bengaluru, Hyderabad, Chennai, Kolkata & Ahmedabad
+        <p style={{ color: '#64748b', fontSize: '0.95rem', marginTop: '6px' }}>
+          Visit our flagship experience outlets across India to try backpacks on in-person, claim instant warranty services, and explore student deals.
         </p>
       </div>
 
-      {/* Filter Bar */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #e2e8f0',
-        borderRadius: '12px',
-        padding: '1rem 1.5rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '1.5rem',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.03)',
-        flexWrap: 'wrap'
-      }}>
-        {/* City Filter Pills */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', flex: 1 }}>
-          <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0a1f38', textTransform: 'uppercase' }}>
-            Filter City:
+      {/* Search & City Filter Bar */}
+      <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.25rem', marginBottom: '2rem', boxShadow: '0 4px 6px rgba(0,0,0,0.03)' }}>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '1rem' }}>
+          <div style={{ flex: 1, minWidth: '240px', position: 'relative' }}>
+            <Search size={18} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+            <input 
+              type="text" 
+              placeholder="Search by Mall name, City, or 6-digit PIN (e.g. Phoenix Pune, 411014)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="form-input"
+              style={{ paddingLeft: '38px', width: '100%' }}
+            />
+          </div>
+
+          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#64748b' }}>
+            {filteredStores.length} Stores Found
           </span>
-          {CITIES.map(c => (
+        </div>
+
+        {/* City Filter Pills */}
+        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+          {CITIES.map(city => (
             <button
-              key={c}
-              onClick={() => setSelectedCity(c)}
+              key={city}
+              onClick={() => setSelectedCity(city)}
               style={{
-                padding: '6px 12px',
+                padding: '6px 14px',
                 borderRadius: '999px',
-                fontSize: '0.82rem',
+                fontSize: '0.8rem',
                 fontWeight: 700,
-                background: selectedCity === c ? '#0a1f38' : '#f1f5f9',
-                color: selectedCity === c ? '#facc15' : '#475569',
-                transition: 'all 0.2s'
+                whiteSpace: 'nowrap',
+                background: selectedCity === city ? '#0f2231' : '#f1f5f9',
+                color: selectedCity === city ? '#ffffff' : '#475569',
+                border: '1px solid',
+                borderColor: selectedCity === city ? '#0f2231' : '#e2e8f0'
               }}
             >
-              {c}
+              {city}
             </button>
           ))}
         </div>
-
-        {/* Search Input */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#f8fafc', border: '1px solid #cbd5e1', padding: '6px 12px', borderRadius: '8px', minWidth: '240px' }}>
-          <Search size={16} color="#64748b" />
-          <input
-            type="text"
-            placeholder="Search mall, area, PIN code..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.85rem', width: '100%' }}
-          />
-        </div>
       </div>
 
-      {/* Main Locator Layout: Store List + Visual Map Canvas */}
+      {/* Main 2-Column Store Layout (List + Interactive Map Simulator) */}
       <div className="store-locator-layout">
-        {/* Stores List Scroll */}
+        {/* Left: Scrollable Store List */}
         <div className="store-list-scroll">
-          {filteredStores.length === 0 ? (
-            <div style={{ background: '#fff', padding: '2rem', textAlign: 'center', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
-              <p style={{ fontWeight: 700 }}>No stores found for this search</p>
-              <button 
-                onClick={() => { setSelectedCity('All Cities'); setSearchQuery(''); }}
-                style={{ color: '#0066cc', fontSize: '0.85rem', fontWeight: 700, marginTop: '8px' }}
-              >
-                Reset Filters
-              </button>
-            </div>
-          ) : (
-            filteredStores.map(store => (
-              <div
-                key={store.id}
-                className={`store-card ${selectedStore?.id === store.id ? 'active' : ''}`}
-                onClick={() => setSelectedStore(store)}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
-                  <h4 className="store-name">{store.name}</h4>
-                  <span style={{ fontSize: '0.72rem', background: '#eff6ff', color: '#0066cc', padding: '2px 8px', borderRadius: '4px', fontWeight: 800 }}>
-                    {store.city}
-                  </span>
-                </div>
-
-                <div className="store-status-pill">
-                  <CheckCircle2 size={13} /> {store.hours}
-                </div>
-
-                <p className="store-address">
-                  {store.address} (PIN: {store.pincode})
-                </p>
-
-                {store.landmark && (
-                  <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '8px' }}>
-                    📍 <strong>Landmark:</strong> {store.landmark}
-                  </div>
-                )}
-
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '10px' }}>
-                  {store.tags.map((t, idx) => (
-                    <span key={idx} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', fontSize: '0.68rem', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>
-                      {t}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="store-contact-row">
-                  <span>📞 {store.phone}</span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleGetDirections(store);
-                    }}
-                    style={{ color: '#0066cc', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.78rem' }}
-                  >
-                    Directions <ExternalLink size={12} />
-                  </button>
-                </div>
+          {filteredStores.map(store => (
+            <div 
+              key={store.id} 
+              className={`store-card ${selectedStore.id === store.id ? 'active' : ''}`}
+              onClick={() => setSelectedStore(store)}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <h4 className="store-name">{store.name}</h4>
+                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0284c7', background: '#e0f2fe', padding: '2px 8px', borderRadius: '4px' }}>
+                  {store.distanceKm} km
+                </span>
               </div>
-            ))
-          )}
+
+              <div className="store-status-pill">
+                <Clock size={12} /> {store.hours}
+              </div>
+
+              <p className="store-address">
+                {store.address}
+              </p>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', margin: '8px 0' }}>
+                {store.tags.map((t, i) => (
+                  <span key={i} style={{ fontSize: '0.68rem', fontWeight: 700, background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '2px 6px', borderRadius: '4px' }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+
+              <div className="store-contact-row">
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Phone size={13} /> {store.phone}
+                </span>
+                <span style={{ color: '#16a34a', fontWeight: 700 }}>
+                  ✓ {store.stockStatus}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Visual Map Canvas / Detail Panel */}
+        {/* Right: Map Interactive Simulator */}
         <div className="store-map-canvas">
           <div className="map-mock-header">
             <div>
-              <strong style={{ fontSize: '1rem', color: '#facc15' }}>
-                {selectedStore ? selectedStore.name : 'Select a Store'}
-              </strong>
-              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>
-                {selectedStore?.city}, {selectedStore?.state} • Distance: ~{selectedStore?.distanceKm || '2.5'} km
-              </div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 700 }}>Selected Outlet</div>
+              <strong style={{ fontSize: '1.05rem', color: '#ffffff' }}>{selectedStore.name}</strong>
             </div>
-            {selectedStore && (
-              <button
-                onClick={() => handleGetDirections(selectedStore)}
-                className="btn-primary"
-                style={{ padding: '6px 14px', fontSize: '0.8rem' }}
-              >
-                <Navigation size={14} /> Open in Maps
-              </button>
-            )}
+            <button 
+              className="btn-primary" 
+              style={{ padding: '6px 14px', fontSize: '0.8rem' }}
+              onClick={() => {
+                const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedStore.mapQuery)}`;
+                window.open(url, '_blank');
+              }}
+            >
+              <Navigation size={14} /> Open in Google Maps
+            </button>
           </div>
 
           <div className="map-interactive-view">
-            {/* Animated Pin */}
             <div className="map-store-pin">
-              <MapPin size={16} />
-              <span>{selectedStore?.city || 'Skybags Flagship'}</span>
+              <MapPin size={16} /> {selectedStore.name} ({selectedStore.distanceKm} km away)
             </div>
 
-            {/* Floating Store Info Badge */}
-            {selectedStore && (
-              <div style={{
-                position: 'absolute',
-                bottom: '20px',
-                left: '20px',
-                right: '20px',
-                background: 'rgba(6, 21, 39, 0.95)',
-                border: '1px solid rgba(250, 204, 21, 0.3)',
-                padding: '1rem 1.25rem',
-                borderRadius: '12px',
-                backdropFilter: 'blur(8px)',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
+            {/* Bottom floating details in map */}
+            <div style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px', background: 'rgba(15, 23, 42, 0.92)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', padding: '1.25rem', color: '#fff' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#ffffff' }}>
-                    {selectedStore.address}
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: '#facc15', marginTop: '2px' }}>
-                    ⚡ Student ID Discount: 20% Instant Off Available Here
-                  </div>
+                  <h5 style={{ fontSize: '1rem', fontWeight: 800, color: '#38bdf8' }}>{selectedStore.name}</h5>
+                  <div style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>{selectedStore.landmark} • {selectedStore.city}, {selectedStore.pincode}</div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 800 }}>
-                    ✓ Stock Available
-                  </div>
-                  <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-                    {selectedStore.hours}
-                  </div>
+                <div style={{ background: '#15803d', color: '#fff', fontSize: '0.72rem', fontWeight: 800, padding: '3px 8px', borderRadius: '4px' }}>
+                  OPEN NOW
                 </div>
               </div>
-            )}
+
+              <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: '#94a3b8', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '8px' }}>
+                <div>📞 {selectedStore.phone}</div>
+                <div>🕒 {selectedStore.hours}</div>
+                <div style={{ color: '#34d399', fontWeight: 700 }}>🎒 In-Store Tryouts Available</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

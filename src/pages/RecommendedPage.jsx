@@ -242,7 +242,7 @@ export const RecommendedPage = () => {
                   Here are our top recommended flagship picks that closely match your criteria:
                 </p>
                 <div className="product-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
-                  {products.slice(0, 3).map(p => (
+                  {PRODUCTS.slice(0, 3).map(p => (
                     <ProductCard key={p.id} product={p} />
                   ))}
                 </div>

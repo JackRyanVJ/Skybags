@@ -111,13 +111,11 @@ export const CheckoutPage = () => {
 
     // Confetti celebration!
     try {
-      if (typeof confetti === 'function') {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-      }
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
     } catch (e) {}
 
     showToast(`Order #${newOrder.id} Placed Successfully! 🎉`);
