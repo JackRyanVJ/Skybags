@@ -20,6 +20,7 @@ import {
 
 export const HomePage = () => {
   const { 
+    products,
     setActiveTab, 
     navigateToCategory, 
     navigateToProduct, 
@@ -27,9 +28,9 @@ export const HomePage = () => {
     applyCouponCode 
   } = useShop();
 
-  const bestSellers = PRODUCTS.filter(p => p.isBestseller).slice(0, 4);
-  const newArrivals = PRODUCTS.filter(p => p.isNew).slice(0, 4);
-  const featuredSuitcases = PRODUCTS.filter(p => p.category === 'suitcases').slice(0, 4);
+  const bestSellers = products.filter(p => p.isBestseller).slice(0, 4);
+  const newArrivals = products.filter(p => p.isNew).slice(0, 4);
+  const featuredSuitcases = products.filter(p => p.category === 'suitcases').slice(0, 4);
 
   const [copiedCoupon, setCopiedCoupon] = React.useState(null);
 
