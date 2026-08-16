@@ -22,6 +22,7 @@ import {
 
 export const ProductDetailPage = () => {
   const { 
+    products,
     selectedProduct, 
     addToCart, 
     toggleWishlist, 
@@ -32,7 +33,7 @@ export const ProductDetailPage = () => {
   } = useShop();
 
   // Fallback to first product if none selected
-  const product = selectedProduct || PRODUCTS[0];
+  const product = selectedProduct || products[0];
 
   const [activeImage, setActiveImage] = useState(product.image);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
@@ -81,7 +82,7 @@ export const ProductDetailPage = () => {
   };
 
   // Related products from same category
-  const relatedProducts = PRODUCTS
+  const relatedProducts = products
     .filter(p => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
 
