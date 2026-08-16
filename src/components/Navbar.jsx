@@ -62,7 +62,7 @@ export const Navbar = () => {
           >
             <div className="logo-badge">
               <img 
-                src="/images/brand/skybags_logo.png" 
+                src="https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/brand/skybags_logo.png" 
                 alt="Skybags Logo" 
                 className="logo-img"
                 onError={(e) => {
