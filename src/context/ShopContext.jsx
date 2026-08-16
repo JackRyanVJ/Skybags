@@ -1,5 +1,12 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { PRODUCTS, COUPONS } from '../data/products';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { PRODUCTS as STATIC_PRODUCTS, COUPONS } from '../data/products';
+import { 
+  fetchProductsFromSupabase, 
+  recordUserLoginToSupabase, 
+  recordOrderToSupabase, 
+  updateOrderStatusInSupabase,
+  supabase 
+} from '../lib/supabase';
 
 const ShopContext = createContext();
 
@@ -13,25 +20,97 @@ export const useShop = () => {
 
 export const ShopProvider = ({ children }) => {
   // Navigation & View State
-  const [activeTab, setActiveTab] = useState('home'); // home, backpacks, suitcases, duffels, shop, offers, recommended, stores, account, checkout
-  const [selectedProduct, setSelectedProduct] = useState(null); // For Full PDP View
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      const hash = window.location.hash;
+      if (path === '/admin-skybags' || hash === '#admin-skybags') {
+        return 'admin';
+      }
+    }
+    return 'home';
+  });
+
+  const [selectedProduct, setSelectedProduct] = useState(null); // Full PDP View
   const [quickViewProduct, setQuickViewProduct] = useState(null); // Quick View Modal
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   
-  // Login Gate State (Shown on opening)
-  const [showLoginGate, setShowLoginGate] = useState(true);
+  // Login Gate State (Shown on opening unless on /admin-skybags)
+  const [showLoginGate, setShowLoginGate] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      const hash = window.location.hash;
+      if (path === '/admin-skybags' || hash === '#admin-skybags') {
+        return false;
+      }
+    }
+    return true;
+  });
   const [toastMessage, setToastMessage] = useState(null);
+
+  // Dynamic Products State (Live Sync from Supabase with fallback to static catalog)
+  const [products, setProducts] = useState(STATIC_PRODUCTS);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+
+  // Function to load live products from Supabase
+  const reloadProducts = useCallback(async () => {
+    setIsLoadingProducts(true);
+    const liveData = await fetchProductsFromSupabase();
+    if (liveData && liveData.length > 0) {
+      setProducts(liveData);
+    }
+    setIsLoadingProducts(false);
+  }, []);
+
+  // Fetch Supabase products on mount and setup Realtime Listener
+  useEffect(() => {
+    reloadProducts();
+
+    // Listen for URL changes / hash changes for /admin-skybags
+    const handleLocationChange = () => {
+      const path = window.location.pathname;
+      const hash = window.location.hash;
+      if (path === '/admin-skybags' || hash === '#admin-skybags') {
+        setActiveTab('admin');
+        setShowLoginGate(false);
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+
+    // Optional Supabase Realtime Subscription for products table
+    let channel;
+    try {
+      channel = supabase
+        .channel('public:products')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
+          reloadProducts();
+        })
+        .subscribe();
+    } catch (e) {
+      console.warn('Realtime subscription not active:', e);
+    }
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
+  }, [reloadProducts]);
 
   // Cart State (Persisted)
   const [cart, setCart] = useState(() => {
     try {
       const saved = localStorage.getItem('skybags_cart');
       return saved ? JSON.parse(saved) : [
-        { product: PRODUCTS[0], quantity: 1, selectedColor: PRODUCTS[0].colors[0] },
-        { product: PRODUCTS[10], quantity: 1, selectedColor: PRODUCTS[10].colors[0] }
+        { product: STATIC_PRODUCTS[0], quantity: 1, selectedColor: STATIC_PRODUCTS[0].colors[0] },
+        { product: STATIC_PRODUCTS[10], quantity: 1, selectedColor: STATIC_PRODUCTS[10].colors[0] }
       ];
     } catch {
       return [];
@@ -52,7 +131,7 @@ export const ShopProvider = ({ children }) => {
   const [appliedCoupon, setAppliedCoupon] = useState(COUPONS[0]); // Default to student COLLEGE20
 
   // User State (Persisted with Demo student Varad Jadhav)
-  const [user, setUser] = useState(() => {
+  const [user, setUserState] = useState(() => {
     try {
       const saved = localStorage.getItem('skybags_user');
       return saved ? JSON.parse(saved) : {
@@ -70,6 +149,15 @@ export const ShopProvider = ({ children }) => {
     }
   });
 
+  // Wrapped setUser that automatically synchronizes customer login details to Supabase
+  const setUser = (userData) => {
+    setUserState(userData);
+    if (userData && userData.email) {
+      // Save login record to Supabase user_logins table in real time
+      recordUserLoginToSupabase(userData);
+    }
+  };
+
   // Saved Addresses State
   const [savedAddresses, setSavedAddresses] = useState(() => {
     try {
@@ -82,11 +170,11 @@ export const ShopProvider = ({ children }) => {
           fullName: 'Varad Jadhav',
           phone: '9876543210',
           flatNo: 'Room 304, Boys Hostel B',
-          street: 'University Road, Ganeshkhind',
+          street: 'Mumbai University Kalina Campus',
           landmark: 'Opposite Main Library',
-          city: 'Pune',
+          city: 'Mumbai',
           state: 'Maharashtra',
-          pincode: '411007'
+          pincode: '400098'
         },
         {
           id: 'addr-2',
@@ -94,7 +182,7 @@ export const ShopProvider = ({ children }) => {
           isDefault: false,
           fullName: 'Varad Jadhav',
           phone: '9876543210',
-          flatNo: 'A-402, Green Meadows',
+          flatNo: 'A-402, Greenfield Meadows',
           street: 'Baner Road',
           landmark: 'Near Balewadi High Street',
           city: 'Pune',
@@ -120,11 +208,11 @@ export const ShopProvider = ({ children }) => {
           courier: 'Delhivery Express (Tracking #DL98421098IN)',
           expectedDelivery: '17 August 2026',
           items: [
-            { product: PRODUCTS[3], quantity: 1, selectedColor: PRODUCTS[3].colors[0], price: PRODUCTS[3].price }
+            { product: STATIC_PRODUCTS[3], quantity: 1, selectedColor: STATIC_PRODUCTS[3].colors[0], price: STATIC_PRODUCTS[3].price }
           ],
           totalAmount: 1759,
           paymentMethod: 'UPI (GPay - varad@okaxis)',
-          shippingAddress: 'Room 304, Boys Hostel B, University Road, Pune, Maharashtra - 411007',
+          shippingAddress: 'Room 304, Boys Hostel B, Mumbai University Kalina Campus, Mumbai, Maharashtra - 400098',
           canCancel: true
         },
         {
@@ -135,11 +223,11 @@ export const ShopProvider = ({ children }) => {
           courier: 'BlueDart Express',
           expectedDelivery: '31 July 2026 (Delivered)',
           items: [
-            { product: PRODUCTS[0], quantity: 1, selectedColor: PRODUCTS[0].colors[0], price: PRODUCTS[0].price }
+            { product: STATIC_PRODUCTS[0], quantity: 1, selectedColor: STATIC_PRODUCTS[0].colors[0], price: STATIC_PRODUCTS[0].price }
           ],
           totalAmount: 1199,
           paymentMethod: 'Credit Card (Visa ending in 4082)',
-          shippingAddress: 'A-402, Green Meadows, Baner Road, Pune, Maharashtra - 411045',
+          shippingAddress: 'A-402, Greenfield Meadows, Baner Road, Pune, Maharashtra - 411045',
           canCancel: false
         }
       ];
@@ -196,6 +284,18 @@ export const ShopProvider = ({ children }) => {
     }
   }, [savedAddresses]);
 
+  useEffect(() => {
+    try {
+      if (user) {
+        localStorage.setItem('skybags_user', JSON.stringify(user));
+      } else {
+        localStorage.removeItem('skybags_user');
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [user]);
+
   // Toast Notification Helper
   const showToast = (message, type = 'success') => {
     setToastMessage({ message, type });
@@ -206,7 +306,7 @@ export const ShopProvider = ({ children }) => {
 
   // Cart Operations
   const addToCart = (product, selectedColor = null, quantity = 1) => {
-    const color = selectedColor || product.colors[0];
+    const color = selectedColor || product.colors?.[0] || { name: 'Standard', hex: '#000000' };
     setCart(prev => {
       const existingIdx = prev.findIndex(
         item => item.product.id === product.id && item.selectedColor.name === color.name
@@ -254,7 +354,7 @@ export const ShopProvider = ({ children }) => {
         showToast('Removed from Wishlist', 'info');
         return prev.filter(id => id !== productId);
       } else {
-        const prod = PRODUCTS.find(p => p.id === productId);
+        const prod = products.find(p => p.id === productId);
         showToast(`Added ${prod?.name || 'product'} to Wishlist! ❤️`);
         return [...prev, productId];
       }
@@ -264,9 +364,9 @@ export const ShopProvider = ({ children }) => {
   const isInWishlist = (productId) => wishlist.includes(productId);
 
   const moveWishlistToCart = (productId) => {
-    const product = PRODUCTS.find(p => p.id === productId);
+    const product = products.find(p => p.id === productId);
     if (product) {
-      addToCart(product, product.colors[0], 1);
+      addToCart(product, product.colors?.[0], 1);
       toggleWishlist(productId);
     }
   };
@@ -310,7 +410,7 @@ export const ShopProvider = ({ children }) => {
     showToast('Coupon removed', 'info');
   };
 
-  // Place Order Simulation
+  // Place Order Simulation & Supabase Logging
   const placeOrder = (orderData) => {
     const newOrder = {
       id: `SKY-IND-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`,
@@ -327,16 +427,20 @@ export const ShopProvider = ({ children }) => {
       totalAmount: cartFinalTotal,
       paymentMethod: orderData.paymentMethod || 'UPI Payment',
       shippingAddress: orderData.addressString || `${orderData.flatNo}, ${orderData.street}, ${orderData.city}, ${orderData.state} - ${orderData.pincode}`,
-      contactPhone: orderData.phone || user?.phone,
-      contactName: orderData.fullName || user?.name
+      contactPhone: orderData.phone || user?.phone || '+91 9876543210',
+      contactName: orderData.fullName || user?.name || 'Varad Jadhav'
     };
 
     setOrders(prev => [newOrder, ...prev]);
+    
+    // Save to Supabase orders table
+    recordOrderToSupabase(newOrder);
+
     clearCart();
     return newOrder;
   };
 
-  // Prompt Requirement: Option to Cancel Orders which are not delivered yet
+  // Cancel Orders & Supabase Sync
   const cancelOrder = (orderId, reason = 'Customer request') => {
     setOrders(prev => prev.map(order => {
       if (order.id === orderId) {
@@ -352,6 +456,10 @@ export const ShopProvider = ({ children }) => {
       }
       return order;
     }));
+
+    // Update Supabase
+    updateOrderStatusInSupabase(orderId, 'Cancelled', reason);
+
     showToast(`Order #${orderId} has been successfully cancelled. Refund initiated! 💳`, 'info');
   };
 
@@ -406,6 +514,10 @@ export const ShopProvider = ({ children }) => {
         setShowLoginGate,
         toastMessage,
         showToast,
+        products,
+        setProducts,
+        reloadProducts,
+        isLoadingProducts,
         cart,
         addToCart,
         removeFromCart,
