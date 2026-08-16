@@ -5,11 +5,11 @@ import { ProductCard } from '../components/ProductCard';
 import { Filter, RotateCcw, SlidersHorizontal, Laptop, Droplets, Shield, Sparkles } from 'lucide-react';
 
 export const ShopPage = () => {
-  const { filters, setFilters, resetFilters, searchQuery, setSearchQuery } = useShop();
+  const { products, filters, setFilters, resetFilters, searchQuery, setSearchQuery } = useShop();
 
   // Filter and Sort Logic
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter(product => {
+    return products.filter(product => {
       // Category filter
       if (filters.category !== 'all' && product.category !== filters.category) {
         return false;
@@ -56,7 +56,7 @@ export const ShopPage = () => {
       if (filters.sortBy === 'discount') return b.discount - a.discount;
       return 0; // Default featured
     });
-  }, [filters, searchQuery]);
+  }, [filters, searchQuery, products]);
 
   const handleCategoryChange = (catId) => {
     setFilters(prev => ({
@@ -99,7 +99,7 @@ export const ShopPage = () => {
                 >
                   <span>{cat.name}</span>
                   <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>
-                    ({cat.id === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.category === cat.id).length})
+                    ({cat.id === 'all' ? products.length : products.filter(p => p.category === cat.id).length})
                   </span>
                 </button>
               ))}
@@ -173,7 +173,7 @@ export const ShopPage = () => {
             <div className="filter-options-list">
               <label className="filter-checkbox-label">
                 <input 
-                  type="checkbox"
+                  type="checkbox" 
                   checked={filters.minCapacity === 0 && filters.maxCapacity === 35}
                   onChange={(e) => setFilters(prev => ({
                     ...prev,
@@ -185,7 +185,7 @@ export const ShopPage = () => {
               </label>
               <label className="filter-checkbox-label">
                 <input 
-                  type="checkbox"
+                  type="checkbox" 
                   checked={filters.minCapacity === 36 && filters.maxCapacity === 65}
                   onChange={(e) => setFilters(prev => ({
                     ...prev,
@@ -197,7 +197,7 @@ export const ShopPage = () => {
               </label>
               <label className="filter-checkbox-label">
                 <input 
-                  type="checkbox"
+                  type="checkbox" 
                   checked={filters.minCapacity === 66}
                   onChange={(e) => setFilters(prev => ({
                     ...prev,
