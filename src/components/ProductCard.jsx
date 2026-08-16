@@ -92,7 +92,8 @@ export const ProductCard = ({ product }) => {
 
         {/* Feature Specs Badges */}
         <div className="product-card-spec-row">
-          {product.laptopCompartment && product.category === 'backpacks' && (\n            <span className="spec-pill" title={product.laptopCompartment}>
+          {product.laptopCompartment && product.category === 'backpacks' && (
+            <span className="spec-pill" title={product.laptopCompartment}>
               <Laptop size={11} /> {product.laptopSizeValue ? `${product.laptopSizeValue}" Laptop` : 'Laptop Ready'}
             </span>
           )}
