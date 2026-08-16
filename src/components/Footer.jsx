@@ -62,7 +62,7 @@ export const Footer = () => {
         <div className="footer-grid">
           <div className="footer-brand">
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#fff', padding: '4px 10px', borderRadius: '6px', marginBottom: '14px' }}>
-              <img src="/images/brand/skybags_logo.png" alt="Skybags Logo" style={{ height: '32px' }} />
+              <img src="https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/brand/skybags_logo.png" alt="Skybags Logo" style={{ height: '32px' }} />
               <span style={{ color: '#0066cc', fontWeight: 900, fontSize: '1.2rem' }}>Skybags</span>
             </div>
             <p style={{ fontSize: '0.85rem', lineHeight: 1.6, color: '#94a3b8', marginBottom: '1.25rem' }}>
