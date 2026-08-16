@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useShop, ShopProvider } from './context/ShopContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -17,12 +17,35 @@ import { AccountPage } from './pages/AccountPage';
 import { RecommendedPage } from './pages/RecommendedPage';
 import { StoreLocatorPage } from './pages/StoreLocatorPage';
 import { OffersPage } from './pages/OffersPage';
+import { AdminPage } from './pages/AdminPage';
 
 function AppContent() {
-  const { activeTab, showLoginGate, setShowLoginGate } = useShop();
+  const { activeTab, setActiveTab, showLoginGate, setShowLoginGate } = useShop();
+
+  // Listen to path changes or URL navigation to /admin-skybags
+  useEffect(() => {
+    const checkRoute = () => {
+      const pathname = window.location.pathname;
+      const hash = window.location.hash;
+      if (pathname === '/admin-skybags' || hash === '#admin-skybags' || hash === '#/admin-skybags') {
+        setActiveTab('admin');
+        setShowLoginGate(false);
+      }
+    };
+
+    checkRoute();
+    window.addEventListener('popstate', checkRoute);
+    window.addEventListener('hashchange', checkRoute);
+    return () => {
+      window.removeEventListener('popstate', checkRoute);
+      window.removeEventListener('hashchange', checkRoute);
+    };
+  }, [setActiveTab, setShowLoginGate]);
 
   const renderActiveView = () => {
     switch (activeTab) {
+      case 'admin':
+        return <AdminPage />;
       case 'home':
         return <HomePage />;
       case 'shop':
@@ -47,11 +70,21 @@ function AppContent() {
     }
   };
 
+  // If in Admin portal, render dedicated Admin view
+  if (activeTab === 'admin') {
+    return (
+      <div className="app-container">
+        <AdminPage />
+        <Toast />
+      </div>
+    );
+  }
+
   return (
     <div className="app-container">
       {/* 
         Prompt Requirement: "Create a login page when the website is opened"
-        Shows the interactive Skybags Login Screen with Google login & Student SSO
+        Shows the interactive Skybags Login Screen with Google login, Email login & Student SSO
       */}
       {showLoginGate && (
         <LoginPage onClose={() => setShowLoginGate(false)} />
