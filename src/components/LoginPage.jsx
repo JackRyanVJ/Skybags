@@ -153,7 +153,7 @@ export const LoginPage = ({ onClose }) => {
         <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#ffffff', padding: '6px 16px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '10px' }}>
             <img 
-              src="/images/brand/skybags_logo.png" 
+              src="https://zocvgaubtabpgknzpzyx.supabase.co/storage/v1/object/public/product-images/brand/skybags_logo.png" 
               alt="Skybags Logo" 
               style={{ height: '34px' }}
               onError={(e) => { e.target.style.display = 'none'; }}
@@ -209,8 +209,7 @@ export const LoginPage = ({ onClose }) => {
           <button
             type="button"
             onClick={() => { setLoginMethod('email'); setOtpSent(false); }}
-            style={{
-              flex: 1,
+            style={{\n              flex: 1,
               padding: '7px 0',
               borderRadius: '6px',
               fontSize: '0.82rem',
@@ -229,8 +228,7 @@ export const LoginPage = ({ onClose }) => {
           <button
             type="button"
             onClick={() => { setLoginMethod('mobile'); setOtpSent(false); setOtp(''); }}
-            style={{
-              flex: 1,
+            style={{\n              flex: 1,
               padding: '7px 0',
               borderRadius: '6px',
               fontSize: '0.82rem',
