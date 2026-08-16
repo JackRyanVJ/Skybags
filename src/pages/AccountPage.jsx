@@ -16,20 +16,21 @@ import {
   CheckCircle2, 
   Plus, 
   Trash2, 
-  ExternalLink,
-  Download,
-  AlertCircle,
-  Ban,
-  RotateCcw,
-  X
+  ExternalLink, 
+  Download, 
+  AlertCircle, 
+  Ban, 
+  RotateCcw, 
+  X 
 } from 'lucide-react';
 
 export const AccountPage = () => {
   const { 
+    products,
     user, 
     setUser, 
     orders, 
-    cancelOrder,
+    cancelOrder, 
     wishlist, 
     savedAddresses, 
     setSavedAddresses, 
@@ -58,7 +59,7 @@ export const AccountPage = () => {
     pincode: '411007'
   });
 
-  const wishlistedProducts = PRODUCTS.filter(p => wishlist.includes(p.id));
+  const wishlistedProducts = products.filter(p => wishlist.includes(p.id));
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-IN', {
