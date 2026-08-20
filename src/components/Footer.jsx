@@ -88,6 +88,7 @@ export const Footer = () => {
           <div>
             <h5 className="footer-heading">Customer Care</h5>
             <ul className="footer-links-list">
+              <li><a href="#faq" onClick={(e) => { e.preventDefault(); setActiveTab('home'); setTimeout(() => { const el = document.getElementById('faq-section'); if(el) el.scrollIntoView({behavior:'smooth'}); }, 100); }}>Help & FAQs</a></li>
               <li><a href="#track" onClick={(e) => { e.preventDefault(); setActiveTab('account'); }}>Track Your Order</a></li>
               <li><a href="#stores" onClick={(e) => { e.preventDefault(); setActiveTab('stores'); }}>Locate Nearby Store</a></li>
               <li><a href="#finder" onClick={(e) => { e.preventDefault(); setActiveTab('recommended'); }}>Bag Finder Quiz</a></li>

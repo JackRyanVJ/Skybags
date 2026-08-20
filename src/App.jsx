@@ -8,6 +8,7 @@ import { SearchModal } from './components/SearchModal';
 import { AuthModal } from './components/AuthModal';
 import { Toast } from './components/Toast';
 import { LoginPage } from './components/LoginPage';
+import { ChatbotModal } from './components/ChatbotModal';
 
 import { HomePage } from './pages/HomePage';
 import { ShopPage } from './pages/ShopPage';
@@ -101,6 +102,7 @@ function AppContent() {
       <QuickViewModal />
       <SearchModal />
       <AuthModal />
+      <ChatbotModal />
       <Toast />
     </div>
   );

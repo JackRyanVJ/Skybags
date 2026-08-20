@@ -3,6 +3,7 @@ import { useShop } from '../context/ShopContext';
 import { PRODUCTS, COUPONS } from '../data/products';
 import { REVIEWS } from '../data/reviews';
 import { ProductCard } from '../components/ProductCard';
+import { FaqSection } from '../components/FaqSection';
 import { 
   Sparkles, 
   ArrowRight, 
@@ -451,6 +452,9 @@ export const HomePage = () => {
           </div>
         </div>
       </section>
+
+      {/* Frequently Asked Questions (FAQ Section) */}
+      <FaqSection />
     </div>
   );
 };

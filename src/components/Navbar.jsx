@@ -144,6 +144,20 @@ export const Navbar = () => {
                 Offers %
               </button>
             </li>
+            <li>
+              <button 
+                className="nav-link-btn"
+                onClick={() => {
+                  setActiveTab('home');
+                  setTimeout(() => {
+                    const el = document.getElementById('faq-section');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }, 100);
+                }}
+              >
+                FAQs
+              </button>
+            </li>
           </ul>
 
           {/* Nav Actions (Search, Wishlist, Account, Cart) */}
